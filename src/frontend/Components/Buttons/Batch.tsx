@@ -7,7 +7,8 @@ import { TimetableType } from "../../../utils/types";
 
 export default function Batch() {
     const [data, setData] = React.useState<BatchResponse["batches"]>([]);
-    const { selectedValues, setSelectedValues } = useContext(SelectedValuesContext);
+    const { selectedValues, setSelectedValues, selectedValueCookie } =
+        useContext(SelectedValuesContext);
 
     useEffect(() => {
         const id = selectedValues.academicYear.value;
@@ -50,6 +51,7 @@ export default function Batch() {
                     fullWidth
                     disabled={!selectedValues.academicYear.selected}
                     value={selectedValues.batch.value || ""}
+                    defaultValue={selectedValueCookie?.selectedValues.batch.value ?? ""}
                 >
                     {data.map((batch, i) => (
                         <MenuItem key={batch.batchName} value={batch.id}>

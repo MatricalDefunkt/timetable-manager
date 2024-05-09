@@ -7,7 +7,8 @@ import { TimetableType } from "../../../utils/types";
 
 export default function Division() {
     const [data, setData] = React.useState<DivisionResponse["divisions"]>([]);
-    const { selectedValues, setSelectedValues } = useContext(SelectedValuesContext);
+    const { selectedValues, setSelectedValues, selectedValueCookie } =
+        useContext(SelectedValuesContext);
 
     useEffect(() => {
         const id = selectedValues.department.value;
@@ -50,6 +51,7 @@ export default function Division() {
                     fullWidth
                     disabled={!selectedValues.department.selected}
                     value={selectedValues.division.value || ""}
+                    defaultValue={selectedValueCookie?.selectedValues.division.value || ""}
                 >
                     {data.map((division, i) => (
                         <MenuItem key={division.divisionName} value={division.id}>

@@ -4,7 +4,8 @@ import { SelectedValuesContext } from "../../context/SelectedValuesContext";
 import { TimetableType as ETimetableType } from "../../../utils/types";
 
 export default function TimetableType() {
-    const { selectedValues, setSelectedValues } = useContext(SelectedValuesContext);
+    const { selectedValues, setSelectedValues, selectedValueCookie } =
+        useContext(SelectedValuesContext);
 
     const data: { name: string; value: ETimetableType }[] = [
         { name: "Division", value: 0 },
@@ -26,7 +27,7 @@ export default function TimetableType() {
                     label="Timetable Type"
                     select
                     fullWidth
-                    defaultValue={""}
+                    defaultValue={selectedValueCookie?.selectedValues.timetableType.value ?? ""}
                 >
                     {data.map((timetableType, i) => (
                         <MenuItem key={timetableType.name} value={timetableType.value}>

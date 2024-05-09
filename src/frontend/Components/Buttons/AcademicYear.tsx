@@ -7,7 +7,8 @@ import api from "../..";
 export default function AcademicYear() {
     const [data, setData] = React.useState<AcademicYearResponse["academicYears"]>([]);
 
-    const { selectedValues, setSelectedValues } = useContext(SelectedValuesContext);
+    const { selectedValues, setSelectedValues, selectedValueCookie } =
+        useContext(SelectedValuesContext);
 
     useEffect(() => {
         api.academicYears.get().then(({ data, error }) => {
@@ -30,7 +31,7 @@ export default function AcademicYear() {
                     label="Academic Year"
                     select
                     fullWidth
-                    defaultValue={""}
+                    defaultValue={selectedValueCookie?.selectedValues.academicYear.value ?? ""}
                 >
                     {data.map((academicYear, i) => (
                         <MenuItem key={academicYear.name} value={academicYear.id}>

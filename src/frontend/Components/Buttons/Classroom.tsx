@@ -7,7 +7,8 @@ import { TimetableType } from "../../../utils/types";
 
 export default function Classroom() {
     const [data, setData] = React.useState<ClassroomResponse["classrooms"]>([]);
-    const { selectedValues, setSelectedValues } = useContext(SelectedValuesContext);
+    const { selectedValues, setSelectedValues, selectedValueCookie } =
+        useContext(SelectedValuesContext);
 
     useEffect(() => {
         const id = selectedValues.academicYear.value;
@@ -50,6 +51,7 @@ export default function Classroom() {
                     fullWidth
                     disabled={!selectedValues.academicYear.selected}
                     value={selectedValues.classroom.value || ""}
+                    defaultValue={selectedValueCookie?.selectedValues.classroom.value || ""}
                 >
                     {data.map((classroom, i) => (
                         <MenuItem key={classroom.classroomName} value={classroom.id}>

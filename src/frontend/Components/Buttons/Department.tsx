@@ -7,7 +7,8 @@ import { TimetableType } from "../../../utils/types";
 
 export default function Department() {
     const [data, setData] = React.useState<DepartmentResponse["departments"]>([]);
-    const { selectedValues, setSelectedValues } = useContext(SelectedValuesContext);
+    const { selectedValues, setSelectedValues, selectedValueCookie } =
+        useContext(SelectedValuesContext);
 
     useEffect(() => {
         const id = selectedValues.batch.value;
@@ -50,6 +51,7 @@ export default function Department() {
                     fullWidth
                     disabled={!selectedValues.batch.selected}
                     value={selectedValues.department.value || ""}
+                    defaultValue={selectedValueCookie?.selectedValues.department.value || ""}
                 >
                     {data.map((department, i) => (
                         <MenuItem key={department.departmentName} value={department.id}>
