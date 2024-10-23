@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Sequelize } from "sequelize";
 import {
     AcademicYear,
     Batch,
@@ -19,15 +20,10 @@ import {
 import Papa from "papaparse";
 
 function removeDuplicates<T>(arr: T[]): T[] {
-    const uniqueArray = arr.filter((value, index) => {
-        const _value = JSON.stringify(value);
-        return (
-            index ===
-            arr.findIndex((obj) => {
-                return JSON.stringify(obj) === _value;
-            })
-        );
-    });
+    const uniqueArray = Array.from(new Set(arr.map((value) => JSON.stringify(value)))).map((json) =>
+        JSON.parse(json),
+    );
+
     return uniqueArray;
 }
 
@@ -133,17 +129,20 @@ function validateCsvData(
             expectedKeys = Object.keys(unavailabilityData);
             dataKeys = Object.keys(parsedCsv.data[0]);
             break;
-        case "slot":
+        case "slot": {
             expectedKeys = Object.keys(slotInfo);
             dataKeys = Object.keys(parsedCsv.data[0]);
             break;
-        case "timetable":
+        }
+        case "timetable": {
             expectedKeys = Object.keys(timetableData);
             dataKeys = Object.keys(parsedCsv.data[0]);
             break;
-        default:
-            throw new Error(`Unhandled case in validateCsvData function: ${csvType}`);
-            break;
+        }
+        default: {
+            const _exhaustiveCheck: never = csvType;
+            return _exhaustiveCheck;
+        }
     }
 
     // This loop will remove the row with missing data
@@ -203,7 +202,12 @@ async function uploadBatchAndSubdivsionData(csvData: string, academicYearId: Aca
         };
     });
     batchCreate = removeDuplicates(batchCreate);
-    const batches = await Batch.bulkCreate(batchCreate);
+    await Batch.bulkCreate(batchCreate);
+    const batches = await Batch.findAll({
+        where: {
+            AcademicYearId: academicYearId,
+        },
+    });
     // Creating departments
     let departmentCreate: {
         departmentName: string;
@@ -214,15 +218,19 @@ async function uploadBatchAndSubdivsionData(csvData: string, academicYearId: Aca
         const batch = batches.find(
             (batch) =>
                 areEqual(batch.batchName, batchName) && batch.AcademicYearId === academicYearId,
-        )!;
+        );
+        if (!batch) {
+            throw new Error("Batch is undefined");
+        }
         departmentCreate.push({
             departmentName,
             BatchId: batch.id,
         });
     }
     departmentCreate = removeDuplicates(departmentCreate);
-    const departments = await Department.bulkCreate(departmentCreate);
 
+    await Department.bulkCreate(departmentCreate);
+    const departments = await Department.findAll();
     // Creating divisions
     let divisionCreate: {
         divisionName: string;
@@ -250,8 +258,8 @@ async function uploadBatchAndSubdivsionData(csvData: string, academicYearId: Aca
         });
     }
     divisionCreate = removeDuplicates(divisionCreate);
-    const divisions = await Division.bulkCreate(divisionCreate);
-
+    await Division.bulkCreate(divisionCreate);
+    const divisions = await Division.findAll();
     // Creating subdivisions
     let subdivisionCreate: {
         subdivisionName: string;
@@ -350,8 +358,12 @@ async function uploadSubjectAndTeacherData(csvData: string, academicYearId: Acad
         };
     });
     teacherCreate = removeDuplicates(teacherCreate);
-    const teachers = await Teacher.bulkCreate(teacherCreate);
-
+    await Teacher.bulkCreate(teacherCreate);
+    const teachers = await Teacher.findAll({
+        where: {
+            AcademicYearId: academicYearId,
+        },
+    });
     let groupCreate = parsedCsv.data.map((row) => {
         return {
             groupName: row.group_name,
@@ -360,7 +372,12 @@ async function uploadSubjectAndTeacherData(csvData: string, academicYearId: Acad
         };
     });
     groupCreate = removeDuplicates(groupCreate);
-    const groups = await Group.bulkCreate(groupCreate);
+    await Group.bulkCreate(groupCreate);
+    const groups = await Group.findAll({
+        where: {
+            AcademicYearId: academicYearId,
+        },
+    });
     const batches = await Batch.findAll({
         where: {
             AcademicYearId: academicYearId,
@@ -434,8 +451,8 @@ async function uploadSubjectAndTeacherData(csvData: string, academicYearId: Acad
         });
     }
     subjectCreate = removeDuplicates(subjectCreate);
-    const subjects = await Subject.bulkCreate(subjectCreate);
-
+    await Subject.bulkCreate(subjectCreate);
+    const subjects = await Subject.findAll();
     for (const row of parsedCsv.data) {
         const {
             batch_name: batchName,
@@ -733,8 +750,8 @@ async function uploadTimetableData(csvData: string, academicYearId: AcademicYear
         });
     }
     slotDataCreate = removeDuplicates(slotDataCreate);
-    const slotDatas = await SlotDatas.bulkCreate(slotDataCreate);
-
+    await SlotDatas.bulkCreate(slotDataCreate);
+    const slotDatas = await SlotDatas.findAll();
     let slotDataClassesCreate: {
         SlotDataId: number;
         ClassroomId: number;

@@ -10,10 +10,10 @@ import { AcademicYear } from "../../database";
 
 async function sampleDataUpload({ syncDatabase } = { syncDatabase: true }) {
     if (syncDatabase) {
-        await sequelize
-            .query("SET FOREIGN_KEY_CHECKS = 0")
-            .then(() => sequelize.sync({ force: true }))
-            .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 1"))
+        await sequelize.authenticate()
+            // .query("SET FOREIGN_KEY_CHECKS = 0")
+            .then(() => sequelize.sync())
+            // .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 1"))
             .then(() => console.log("Database synchronised."));
     }
     const academicYear1 = await AcademicYear.create({

@@ -114,20 +114,13 @@ Teach.belongsTo(Subject);
 //     },
 // });
 
-await AcademicYear.sync();
-await Batch.sync();
-await Group.sync();
-await Teacher.sync();
-await Classroom.sync();
-await Slot.sync();
+// sequelize.sync();
 
-await Department.sync();
-await Division.sync();
-await Subdivision.sync();
-await Subject.sync();
+// await sequelize.query("SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
 
-await Teach.sync();
-await TeacherUnavailable.sync();
-await SlotDatas.sync();
-await SlotDataClasses.sync();
-await SlotDataSubdivisions.sync();
+// await sequelize
+//     .query("SET FOREIGN_KEY_CHECKS = 0")
+//     .then(() => sequelize.sync({ force: true }))
+//     .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 1"))
+//     .then(() => console.log("Database synchronised."))
+//     .catch((err) => console.log(err));

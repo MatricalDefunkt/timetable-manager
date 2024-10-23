@@ -3,7 +3,7 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "start": "if command -v pm2 &> /dev/null; then (pm2 describe backend-dist > /dev/null && pm2 restart backend-dist) || pm2 start bun --name backend-dist -- run start:backend; (pm2 describe frontend-dist > /dev/null && pm2 restart frontend-dist) || pm2 start bun --name frontend-dist -- run start:frontend; else bun add -g pm2 && bun run dev; fi",
+    "start": "concurrently \"bun run dev:frontend\" \"bun run dev:backend\"",
     "start:frontend": "bunx --bun vite",
     "start:backend": "bun run src/backend/index.ts",
     "dev": "if command -v pm2 &> /dev/null; then (pm2 describe backend > /dev/null && pm2 restart backend) || pm2 start bun --name backend -- run dev:backend; (pm2 describe frontend > /dev/null && pm2 restart frontend) || pm2 start bun --name frontend -- run dev:frontend; else bun add -g pm2 && bun run dev; fi",
@@ -27,7 +27,9 @@
     "@fontsource/roboto": "^5.0.12",
     "@mui/icons-material": "^5.15.14",
     "@mui/material": "^5.15.14",
+    "@sequelize/sqlite3": "^7.0.0-alpha.43",
     "@types/papaparse": "^5.3.14",
+    "concurrently": "^9.0.1",
     "elysia": "latest",
     "mysql2": "^3.9.0",
     "papaparse": "^5.4.1",
@@ -36,6 +38,7 @@
     "react-router-dom": "^6.22.3",
     "react-to-print": "^2.15.1",
     "sequelize": "^6.37.1",
+    "sqlite3": "^5.1.7",
     "uniqolor": "^1.1.1",
     "upload-js": "^2.24.3",
     "use-immer": "^0.9.0"
